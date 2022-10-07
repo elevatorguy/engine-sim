@@ -105,7 +105,7 @@ void EngineSimApplication::initialize(void *instance, ysContextObject::DeviceAPI
     m_engine.GetConsole()->SetDefaultFontDirectory(enginePath + "/fonts/");
 
     const std::string shaderPath = enginePath + "/shaders/";
-    std::string winTitle = "Engine Sim | AngeTheGreat | v" + s_buildVersion;
+    std::string winTitle = "Engine Sim Preview";
     dbasic::DeltaEngine::GameEngineSettings settings;
     settings.API = api;
     settings.DepthBuffer = false;
@@ -757,6 +757,21 @@ void EngineSimApplication::processEngineInput() {
         m_dynoSpeed = clamp(m_dynoSpeed, units::rpm(0), DBL_MAX);
 
         m_infoCluster->setLogMessage("[G] - Set dyno speed to " + std::to_string(m_dynoSpeed));
+        fineControlInUse = true;
+    }
+    else if (m_engine.IsKeyDown(ysKey::Code::J)) {
+        (*m_transmission).enableSlidingDisk(); //todo: disable
+        double diskPosition = (*m_transmission).getDiskPosition();
+        if (mouseWheelDelta > 0) {
+            (*m_transmission).setDiskPosition(diskPosition + 0.01);
+        }
+        else if (mouseWheelDelta < 0) {
+            (*m_transmission).setDiskPosition(diskPosition - 0.01);
+        }
+
+        diskPosition = clamp(diskPosition);
+
+        m_infoCluster->setLogMessage("[J] - T Disk position to " + std::to_string((int)((1.0-diskPosition)*100))+"%");
         fineControlInUse = true;
     }
 
