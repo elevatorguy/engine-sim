@@ -204,15 +204,27 @@ void LoadSimulationCluster::drawCurrentGear(const Bounds &bounds) {
     const Bounds body = insetBounds.verticalSplit(0.0f, 0.9f);
 
     drawFrame(bounds, 1.0f, m_app->getForegroundColor(), m_app->getBackgroundColor());
-    drawCenteredText("Gear", title.inset(10.0f), 24.0f);
 
-    const int gear = (getTransmission() != nullptr)
-        ? getTransmission()->getGear()
+    Transmission* transmission = getTransmission();
+    const int gear = (transmission != nullptr)
+        ? transmission->getGear()
         : -1;
     std::stringstream ss;
     
-    if (gear != -1) ss << (gear + 1);
-    else ss << "N";
+    if (gear != -1) {
+        if (getTransmission()->isAutomatic() == true) {
+	        drawCenteredText("Gear Ratio", title.inset(10.0f), 24.0f);
+            ss << transmission->getGearRatio(gear);
+        }
+        else {
+	        drawCenteredText("Gear", title.inset(10.0f), 24.0f);
+            ss << (gear + 1);
+        }
+    }
+    else {
+        drawCenteredText("Gear", title.inset(10.0f), 24.0f);
+        ss << "N";
+    }
 
     drawCenteredText(ss.str(), body, 64.0f, Bounds::center);
 }

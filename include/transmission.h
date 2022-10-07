@@ -33,6 +33,8 @@ class Transmission {
         inline void setDiskPosition(double position) { m_diskPosition = clamp(position); }
         inline double getDiskPosition() const { return m_diskPosition; }
         inline void enableSlidingDisk() { maySlide = true; }
+        inline bool isAutomatic() { return maySlide; }
+        double getGearRatio(uint32_t gear);
     protected:
         atg_scs::ClutchConstraint m_clutchConstraint;
         atg_scs::RigidBody *m_rotatingMass;

@@ -72,6 +72,17 @@ void Transmission::addToSystem(
     m_engine = engine;
 }
 
+double Transmission::getGearRatio(uint32_t gear) {
+    if (maySlide) {
+        return clamp(m_diskPosition) * (m_diskMax - m_diskMin) + m_diskMin;
+    }
+    else {
+        if (gear < m_gearCount) {
+            return m_gearRatios[gear];
+        }
+    }
+}
+
 void Transmission::changeGear(int newGear) {
     if (newGear < -1 || newGear >= m_gearCount) return;
     else if (newGear != -1) {
@@ -104,7 +115,8 @@ void Transmission::slideGear(void) {
     const double m_car = m_vehicle->getMass();
     const double diff_ratio = m_vehicle->getDiffRatio();
     const double tire_radius = m_vehicle->getTireRadius();
-    const double f = tire_radius / (diff_ratio * (clamp(m_diskPosition)*(m_diskMax - m_diskMin) + m_diskMin));
+    const double gear_ratio = clamp(m_diskPosition) * (m_diskMax - m_diskMin) + m_diskMin;
+    const double f = tire_radius / (diff_ratio * gear_ratio);
     
     const double new_I = m_car * f * f;
     const double E_r = 0.5 * m_rotatingMass->I * m_rotatingMass->v_theta * m_rotatingMass->v_theta;
