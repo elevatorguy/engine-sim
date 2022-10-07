@@ -4,6 +4,7 @@
 #include "vehicle.h"
 #include "engine.h"
 #include "scs.h"
+#include "utilities.h"
 
 class Transmission {
     public:
@@ -25,14 +26,20 @@ class Transmission {
             Vehicle *vehicle,
             Engine *engine);
         void changeGear(int newGear);
+        void slideGear(void);
         inline int getGear() const { return m_gear; }
         inline void setClutchPressure(double pressure) { m_clutchPressure = pressure; }
         inline double getClutchPressure() const { return m_clutchPressure; }
-
+        inline void setDiskPosition(double position) { m_diskPosition = clamp(position); }
+        inline double getDiskPosition() const { return m_diskPosition; }
+        inline void enableSlidingDisk() { maySlide = true; }
     protected:
         atg_scs::ClutchConstraint m_clutchConstraint;
         atg_scs::RigidBody *m_rotatingMass;
         Vehicle *m_vehicle;
+
+        Engine *m_engine;
+        double m_diskPosition;
 
         int m_gear;
         int m_newGear;
@@ -40,6 +47,7 @@ class Transmission {
         double *m_gearRatios;
         double m_maxClutchTorque;
         double m_clutchPressure;
+        bool maySlide;
 };
 
 #endif /* ATG_ENGINE_SIM_TRANSMISSION_H */

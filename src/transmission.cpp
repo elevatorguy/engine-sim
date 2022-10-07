@@ -13,6 +13,9 @@ Transmission::Transmission() {
     m_rotatingMass = nullptr;
     m_vehicle = nullptr;
     m_clutchPressure = 0.0;
+    m_diskPosition = 1.0;
+    m_engine = nullptr;
+    maySlide = false;
 }
 
 Transmission::~Transmission() {
@@ -39,6 +42,10 @@ void Transmission::update(double dt) {
         m_clutchConstraint.m_minTorque = -m_maxClutchTorque * m_clutchPressure;
         m_clutchConstraint.m_maxTorque = m_maxClutchTorque * m_clutchPressure;
     }
+
+    if (maySlide) {
+        slideGear();
+    }
 }
 
 void Transmission::addToSystem(
@@ -54,6 +61,8 @@ void Transmission::addToSystem(
     m_clutchConstraint.setBody2(m_rotatingMass);
 
     system->addConstraint(&m_clutchConstraint);
+
+    m_engine = engine;
 }
 
 void Transmission::changeGear(int newGear) {
@@ -77,6 +86,26 @@ void Transmission::changeGear(int newGear) {
         m_rotatingMass->m = m_car;
         m_rotatingMass->v_theta = new_v_theta;
     }
-
+    
     m_gear = newGear;
 }
+
+void Transmission::slideGear(void) {
+    double current_rpm = m_engine->getRpm();
+    double redline = m_engine->getRedline(); //todo: algorithm
+    
+    const double m_car = m_vehicle->getMass();
+    const double diff_ratio = m_vehicle->getDiffRatio();
+    const double tire_radius = m_vehicle->getTireRadius();
+    const double f = tire_radius / (diff_ratio * (clamp(m_diskPosition)*2.4 + 0.7));
+    
+    const double new_I = m_car * f * f;
+    const double E_r = 0.5 * m_rotatingMass->I * m_rotatingMass->v_theta * m_rotatingMass->v_theta;
+    const double new_v_theta = m_rotatingMass->v_theta < 0 ? -std::sqrt(E_r * 2 / new_I) : std::sqrt(E_r * 2 / new_I);
+
+    m_rotatingMass->I = new_I;
+    m_rotatingMass->p_x = m_rotatingMass->p_y = 0;
+    m_rotatingMass->m = m_car;
+    m_rotatingMass->v_theta = new_v_theta;
+}
+
