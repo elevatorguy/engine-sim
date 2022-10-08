@@ -40,6 +40,8 @@ class Transmission {
 
         Engine *m_engine;
         double m_diskPosition;
+        double m_diskMin;
+        double m_diskMax;
 
         int m_gear;
         int m_newGear;
