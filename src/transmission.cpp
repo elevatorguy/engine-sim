@@ -16,6 +16,8 @@ Transmission::Transmission() {
     m_diskPosition = 1.0;
     m_engine = nullptr;
     maySlide = false;
+    m_diskMin = 0.7;
+    m_diskMax = 3.1;
 }
 
 Transmission::~Transmission() {
@@ -31,6 +33,11 @@ void Transmission::initialize(const Parameters &params) {
     m_maxClutchTorque = params.MaxClutchTorque;
     m_gearRatios = new double[params.GearCount];
     memcpy(m_gearRatios, params.GearRatios, sizeof(double) * m_gearCount);
+    if (params.GearCount > 1)
+    {
+        m_diskMax = m_gearRatios[0];
+        m_diskMin = m_gearRatios[params.GearCount - 1];
+    }
 }
 
 void Transmission::update(double dt) {
@@ -97,7 +104,7 @@ void Transmission::slideGear(void) {
     const double m_car = m_vehicle->getMass();
     const double diff_ratio = m_vehicle->getDiffRatio();
     const double tire_radius = m_vehicle->getTireRadius();
-    const double f = tire_radius / (diff_ratio * (clamp(m_diskPosition)*2.4 + 0.7));
+    const double f = tire_radius / (diff_ratio * (clamp(m_diskPosition)*(m_diskMax - m_diskMin) + m_diskMin));
     
     const double new_I = m_car * f * f;
     const double E_r = 0.5 * m_rotatingMass->I * m_rotatingMass->v_theta * m_rotatingMass->v_theta;
