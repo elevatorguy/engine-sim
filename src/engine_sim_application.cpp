@@ -771,7 +771,7 @@ void EngineSimApplication::processEngineInput() {
 
         diskPosition = clamp(diskPosition);
 
-        m_infoCluster->setLogMessage("[J] - T Disk position to " + std::to_string((int)((1.0-diskPosition)*100))+"%");
+        m_infoCluster->setLogMessage("[J] - T Disk position currently " + std::to_string((int)((1.0-diskPosition)*100))+"%");
         fineControlInUse = true;
     }
 
@@ -884,16 +884,22 @@ void EngineSimApplication::processEngineInput() {
 
     if (m_engine.ProcessKeyDown(ysKey::Code::Up)) {
         m_simulator.getTransmission()->changeGear(m_simulator.getTransmission()->getGear() + 1);
-
-        m_infoCluster->setLogMessage(
+        if (!m_simulator.getTransmission()->isVariable()) {
+            m_infoCluster->setLogMessage(
             "UPSHIFTED TO " + std::to_string(m_simulator.getTransmission()->getGear() + 1));
+        }
+        else {
+            m_infoCluster->setLogMessage("TRANSMISSION ENGAGED");
+        }
     }
     else if (m_engine.ProcessKeyDown(ysKey::Code::Down)) {
         m_simulator.getTransmission()->changeGear(m_simulator.getTransmission()->getGear() - 1);
 
         if (m_simulator.getTransmission()->getGear() != -1) {
-            m_infoCluster->setLogMessage(
+            if (!m_simulator.getTransmission()->isVariable()) {
+                m_infoCluster->setLogMessage(
                 "DOWNSHIFTED TO " + std::to_string(m_simulator.getTransmission()->getGear() + 1));
+            }
         }
         else {
             m_infoCluster->setLogMessage("SHIFTED TO NEUTRAL");
