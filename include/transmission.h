@@ -32,7 +32,7 @@ class Transmission {
         inline double getClutchPressure() const { return m_clutchPressure; }
         inline void setDiskPosition(double position) { m_diskPosition = clamp(position); }
         inline double getDiskPosition() const { return m_diskPosition; }
-        inline void enableSlidingDisk() { maySlide = true; }
+        void enableSlidingDisk();
         inline bool isVariable() { return maySlide; }
     protected:
         atg_scs::ClutchConstraint m_clutchConstraint;

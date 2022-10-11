@@ -72,7 +72,15 @@ void Transmission::addToSystem(
     m_engine = engine;
 }
 
+void Transmission::enableSlidingDisk() {
+    maySlide = true;
+    if(m_gear > -1) {
+        m_gear = 0;
+    }
+}
+
 void Transmission::changeGear(int newGear) {
+    if (maySlide && newGear > 0) return;
     if (newGear < -1 || newGear >= m_gearCount) return;
     else if (newGear != -1) {
         const double m_car = m_vehicle->getMass();
