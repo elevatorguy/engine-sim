@@ -511,6 +511,7 @@ void Simulator::destroy() {
     if (m_crankshaftFrictionConstraints != nullptr) delete[] m_crankshaftFrictionConstraints;
     if (m_exhaustFlowStagingBuffer != nullptr) delete[] m_exhaustFlowStagingBuffer;
     if (m_system != nullptr) delete m_system;
+    if (m_dynoTorqueSamples != nullptr) delete[] m_dynoTorqueSamples;
     if (m_delayFilters != nullptr) delete[] m_delayFilters;
 
     m_crankConstraints = nullptr;
@@ -519,6 +520,7 @@ void Simulator::destroy() {
     m_crankshaftFrictionConstraints = nullptr;
     m_exhaustFlowStagingBuffer = nullptr;
     m_system = nullptr;
+    m_dynoTorqueSamples = nullptr;
 
     m_vehicle = nullptr;
     m_transmission = nullptr;
