@@ -12,6 +12,7 @@ class Transmission {
             int GearCount;
             const double *GearRatios;
             double MaxClutchTorque;
+            bool variable;
         };
 
     public:
@@ -32,9 +33,9 @@ class Transmission {
         inline double getClutchPressure() const { return m_clutchPressure; }
         inline void setDiskPosition(double position) { m_diskPosition = clamp(position); }
         inline double getDiskPosition() const { return m_diskPosition; }
-        void enableSlidingDisk();
         inline bool isVariable() { return maySlide; }
     protected:
+        void enableSlidingDisk();
         atg_scs::ClutchConstraint m_clutchConstraint;
         atg_scs::RigidBody *m_rotatingMass;
         Vehicle *m_vehicle;

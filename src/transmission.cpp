@@ -38,6 +38,9 @@ void Transmission::initialize(const Parameters &params) {
         m_diskMax = m_gearRatios[0];
         m_diskMin = m_gearRatios[params.GearCount - 1];
     }
+    if (params.variable) {
+        enableSlidingDisk();
+    }
 }
 
 void Transmission::update(double dt) {
