@@ -11,6 +11,11 @@ if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type" FORCE)
 endif()
 
+# Default to compiling as Release in single-configuration generators
+if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type" FORCE)
+endif()
+
 if (DTV)
     add_compile_definitions(ATG_ENGINE_SIM_VIDEO_CAPTURE)
 endif (DTV)
@@ -27,7 +32,7 @@ endif (DISCORD_ENABLED)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "cmake")
 
-project(engine-sim)
+project(engine-sim VERSION 0.1.11)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -283,8 +288,14 @@ target_include_directories(engine-sim-app
 add_subdirectory(dependencies)
 
 if (DISCORD_ENABLED)
+    target_sources(engine-sim-app PUBLIC
+        src/discord.cpp
+        include/discord.h
+    )
+    target_include_directories(engine-sim-app PUBLIC
+        dependencies/discord/include
+    )
     target_link_libraries(engine-sim-app
-        discord
         discord-rpc
     )
 endif (DISCORD_ENABLED)
@@ -292,6 +303,22 @@ endif (DISCORD_ENABLED)
 target_link_libraries(engine-sim-app
     engine-sim
 )
+
+# ========================================================
+# Generated build info
+
+# Fallback to '..' if not provided
+if (NOT DEFINED ENGINE_SIM_DATA_ROOT)
+    set(ENGINE_SIM_DATA_ROOT ".." CACHE STRING "Where to look for data")
+endif()
+message(STATUS "Data root set to '${ENGINE_SIM_DATA_ROOT}'")
+
+configure_file(include/build_info.h.in
+    generated/build_info.h @ONLY)
+target_include_directories(engine-sim-app
+    PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/generated)
+
+# ========================================================
 
 # GTEST
 
