@@ -604,5 +604,6 @@ public node vehicle => __engine_sim__vehicle {
 
 public node transmission => __engine_sim__transmission {
     input max_clutch_torque [float]: 1000 * units.lb_ft;
+    input variable [bool]: false;
     alias output __out [transmission_channel];
 }
