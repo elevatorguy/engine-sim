@@ -90,6 +90,7 @@ EngineSimApplication::EngineSimApplication() {
     m_viewParameters.Layer0 = 0;
     m_viewParameters.Layer1 = 0;
 
+    m_displayAngle = 0.0f;
     ysErrorSystem::GetInstance()->AttachErrorHandler(&m_error_handler);
 }
 
@@ -257,6 +258,16 @@ void EngineSimApplication::process(float frame_dt) {
     }
     else if (m_engine.IsKeyDown(ysKey::Code::N5)) {
         speed = 1 / 1000.0;
+    }
+
+    if (m_engine.IsKeyDown(ysKey::Code::F1)) {
+        m_displayAngle += frame_dt * 1.0f;
+    }
+    else if (m_engine.IsKeyDown(ysKey::Code::F2)) {
+        m_displayAngle -= frame_dt * 1.0f;
+    }
+    else if (m_engine.ProcessKeyDown(ysKey::Code::F3)) {
+        m_displayAngle = 0.0f;
     }
 
     m_simulator.setSimulationSpeed(speed);
@@ -813,15 +824,15 @@ void EngineSimApplication::processEngineInput() {
     }
     else if (m_engine.IsKeyDown(ysKey::Code::G) && m_simulator.m_dyno.m_hold) {
         if (mouseWheelDelta > 0) {
-            m_dynoSpeed += units::rpm(100.0);
+            m_dynoSpeed += m_iceEngine->getDynoHoldStep();
         }
         else if (mouseWheelDelta < 0) {
-            m_dynoSpeed -= units::rpm(100.0);
+            m_dynoSpeed -= m_iceEngine->getDynoHoldStep();
         }
 
-        m_dynoSpeed = clamp(m_dynoSpeed, units::rpm(0), DBL_MAX);
+        m_dynoSpeed = clamp(m_dynoSpeed, m_iceEngine->getDynoMinSpeed(), m_iceEngine->getDynoMaxSpeed());
 
-        m_infoCluster->setLogMessage("[G] - Set dyno speed to " + std::to_string(m_dynoSpeed));
+        m_infoCluster->setLogMessage("[G] - Set dyno speed to " + std::to_string(units::toRpm(m_dynoSpeed)));
         fineControlInUse = true;
     }
     else if (m_engine.IsKeyDown(ysKey::Code::J)) {
@@ -908,7 +919,7 @@ void EngineSimApplication::processEngineInput() {
                 m_dynoSpeed *= (1 / (1 + dt));
             }
 
-            if ((m_dynoSpeed + units::rpm(1000)) > m_iceEngine->getRedline()) {
+            if (m_dynoSpeed > m_iceEngine->getRedline()) {
                 m_simulator.m_dyno.m_enabled = false;
                 m_dynoSpeed = units::rpm(0);
             }
@@ -920,7 +931,8 @@ void EngineSimApplication::processEngineInput() {
         }
     }
 
-    m_simulator.m_dyno.m_rotationSpeed = m_dynoSpeed + units::rpm(1000);
+    m_dynoSpeed = clamp(m_dynoSpeed, m_iceEngine->getDynoMinSpeed(), m_iceEngine->getDynoMaxSpeed());
+    m_simulator.m_dyno.m_rotationSpeed = m_dynoSpeed;
 
     const bool prevStarterEnabled = m_simulator.m_starterMotor.m_enabled;
     if (m_engine.IsKeyDown(ysKey::Code::S)) {
@@ -1101,7 +1113,8 @@ void EngineSimApplication::renderScene() {
         m_displayHeight / m_engineView->m_zoom,
         m_engineView->m_bounds,
         m_screenWidth,
-        m_screenHeight);
+        m_screenHeight,
+        m_displayAngle);
 
     m_geometryGenerator.reset();
 
