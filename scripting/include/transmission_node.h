@@ -29,7 +29,7 @@ namespace es_script {
     protected:
         virtual void registerInputs() {
             addInput("max_clutch_torque", &m_parameters.MaxClutchTorque);
-
+            addInput("variable", &m_parameters.variable);
             ObjectReferenceNode<TransmissionNode>::registerInputs();
         }
 
