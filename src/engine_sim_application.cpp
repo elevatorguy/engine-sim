@@ -350,7 +350,7 @@ void EngineSimApplication::run() {
 
         if (m_engine.ProcessKeyDown(ysKey::Code::Tab)) {
             m_screen++;
-            if (m_screen > 2) m_screen = 0;
+            if (m_screen > 3) m_screen = 1;
         }
 
         if (m_engine.ProcessKeyDown(ysKey::Code::F)) {
@@ -933,6 +933,9 @@ void EngineSimApplication::processEngineInput() {
 }
 
 void EngineSimApplication::renderScene() {
+    if (m_screen == 0) {
+        return;
+    }
     getShaders()->ResetBaseColor();
     getShaders()->SetObjectTransform(ysMath::LoadIdentity());
 
@@ -948,7 +951,7 @@ void EngineSimApplication::renderScene() {
 
     m_shaders.CalculateUiCamera(screenWidth, screenHeight);
 
-    if (m_screen == 0) {
+    if (m_screen == 1) {
         Bounds windowBounds((float)screenWidth, (float)screenHeight, { 0, (float)screenHeight });
         Grid grid;
         grid.v_cells = 2;
@@ -981,7 +984,7 @@ void EngineSimApplication::renderScene() {
 
         m_oscCluster->activate();
     }
-    else if (m_screen == 1) {
+    else if (m_screen == 2) {
         Bounds windowBounds((float)screenWidth, (float)screenHeight, { 0, (float)screenHeight });
         m_engineView->setDrawFrame(false);
         m_engineView->setBounds(windowBounds);
@@ -996,7 +999,7 @@ void EngineSimApplication::renderScene() {
         m_mixerCluster->setVisible(false);
         m_infoCluster->setVisible(false);
     }
-    else if (m_screen == 2) {
+    else if (m_screen == 3) {
         Bounds windowBounds((float)screenWidth, (float)screenHeight, { 0, (float)screenHeight });
         Grid grid;
         grid.v_cells = 1;
