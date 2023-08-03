@@ -45,6 +45,7 @@ The UI is extremely minimalistic and there are only a few controls used to inter
 | 1, 2, 3, 4, 5 | Simulation time warp |
 | Tab | Change screen |
 | J | enable transmission variability |
+| J + Scroll | Transmission Disk Position |
 | J and K | disable transmission variability |
 
 ### Using the RPM hold
