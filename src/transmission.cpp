@@ -90,6 +90,12 @@ void Transmission::enableSlidingDisk() {
     }
 }
 
+void Transmission::removeSlidingDisk() {
+    maySlide = false;  
+
+    m_diskPosition = 1.0;
+}
+
 void Transmission::changeGear(int newGear) {
     if (maySlide && newGear > 0) return;
     if (newGear < -1 || newGear >= m_gearCount) return;
