@@ -835,8 +835,18 @@ void EngineSimApplication::processEngineInput() {
         m_infoCluster->setLogMessage("[G] - Set dyno speed to " + std::to_string(units::toRpm(m_dynoSpeed)));
         fineControlInUse = true;
     }
-    else if (m_engine.IsKeyDown(ysKey::Code::J)) {
-        (*m_transmission).enableSlidingDisk();
+    else if (m_engine.ProcessKeyDown(ysKey::Code::K)) {
+        if (m_transmission->isVariable()) {
+            (*m_transmission).removeSlidingDisk();
+            m_infoCluster->setLogMessage("[K] - T Disk not in use");
+        }
+        else {
+            (*m_transmission).enableSlidingDisk();
+            m_infoCluster->setLogMessage("[K] - T Disk in use");
+        }
+    }
+
+    if (m_engine.IsKeyDown(ysKey::Code::J)) {
         double diskPosition = (*m_transmission).getDiskPosition();
         if (mouseWheelDelta > 0) {
             (*m_transmission).setDiskPosition(diskPosition + 0.01);
@@ -847,13 +857,8 @@ void EngineSimApplication::processEngineInput() {
 
         diskPosition = clamp(diskPosition);
 
-        m_infoCluster->setLogMessage("[J] - T Disk position currently " + std::to_string((int)((1.0-diskPosition)*100))+"%");
+        m_infoCluster->setLogMessage("[J] - T Disk position currently " + std::to_string((int)((1.0 - diskPosition) * 100)) + "%");
         fineControlInUse = true;
-
-        if (m_engine.IsKeyDown(ysKey::Code::K)) {
-            (*m_transmission).removeSlidingDisk();
-            m_infoCluster->setLogMessage("[K] - T Disk not in use");
-        }
     }
 
     const double prevTargetThrottle = m_targetSpeedSetting;
