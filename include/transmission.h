@@ -30,10 +30,10 @@ class Transmission {
         inline int getGear() const { return m_gear; }
         inline void setClutchPressure(double pressure) { m_clutchPressure = pressure; }
         inline double getClutchPressure() const { return m_clutchPressure; }
-        inline void setDiskPosition(double position) { m_diskPosition = clamp(position); }
+        inline void setDiskPosition(double position) { if (maySlide) { m_diskPosition = clamp(position); } }
         inline double getDiskPosition() const { return m_diskPosition; }
-        void enableSlidingDisk();
-        void removeSlidingDisk();
+        void unlockSlidingDisk();
+        void lockSlidingDisk();
         inline bool isVariable() { return maySlide; }
         double getGearRatio(uint32_t gear);
     protected:
