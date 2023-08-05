@@ -761,12 +761,12 @@ void EngineSimApplication::processEngineInput() {
     }
     else if (m_engine.ProcessKeyDown(ysKey::Code::K)) {
         if (m_transmission->isVariable()) {
-            (*m_transmission).removeSlidingDisk();
-            m_infoCluster->setLogMessage("[K] - T Disk not in use");
+            (*m_transmission).lockSlidingDisk();
+            m_infoCluster->setLogMessage("[K] - T Disk locked");
         }
         else {
-            (*m_transmission).enableSlidingDisk();
-            m_infoCluster->setLogMessage("[K] - T Disk in use");
+            (*m_transmission).unlockSlidingDisk();
+            m_infoCluster->setLogMessage("[K] - T Disk unlocked");
         }
     }
 
@@ -778,10 +778,9 @@ void EngineSimApplication::processEngineInput() {
         else if (mouseWheelDelta < 0) {
             (*m_transmission).setDiskPosition(diskPosition - 0.01);
         }
+        diskPosition = (*m_transmission).getDiskPosition();
 
-        diskPosition = clamp(diskPosition);
-
-        m_infoCluster->setLogMessage("[J] - T Disk position currently " + std::to_string((int)((1.0 - diskPosition) * 100)) + "%");
+        m_infoCluster->setLogMessage("[J] - T Disk position presently " + std::to_string((int)((1.0 - diskPosition) * 100)) + "%");
         fineControlInUse = true;
     }
 

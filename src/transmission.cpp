@@ -72,17 +72,15 @@ void Transmission::addToSystem(
     m_engine = engine;
 }
 
-void Transmission::enableSlidingDisk() {
+void Transmission::unlockSlidingDisk() {
     maySlide = true;
     if(m_gear > -1) {
         m_gear = 0;
     }
 }
 
-void Transmission::removeSlidingDisk() {
+void Transmission::lockSlidingDisk() {
     maySlide = false;  
-
-    m_diskPosition = 1.0;
 }
 
 void Transmission::changeGear(int newGear) {
@@ -113,7 +111,7 @@ void Transmission::changeGear(int newGear) {
 
 void Transmission::slideGear(void) {
     double current_rpm = m_engine->getRpm();
-    double redline = m_engine->getRedline(); //todo: algorithm
+    double redline = m_engine->getRedline();
     
     const double m_car = m_vehicle->getMass();
     const double diff_ratio = m_vehicle->getDiffRatio();

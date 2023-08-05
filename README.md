@@ -44,7 +44,7 @@ The UI is extremely minimalistic and there are only a few controls used to inter
 | Space + Scroll | Fine throttle adjustment |
 | 1, 2, 3, 4, 5 | Simulation time warp |
 | Tab | Change screen |
-| K | Toggle transmission variability |
+| K | Toggle transmission position lock |
 | J + Scroll | Transmission Disk Position |
 
 ### Using the RPM hold
