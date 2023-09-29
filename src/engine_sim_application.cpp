@@ -389,6 +389,7 @@ void EngineSimApplication::run() {
     while (true) {
         m_engine.StartFrame();
 
+        if (m_engine.shouldExit()) { break; }
         if (!m_engine.IsOpen()) break;
         if (m_engine.ProcessKeyDown(ysKey::Code::Escape)) {
             break;
